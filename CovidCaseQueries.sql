@@ -51,14 +51,17 @@ ORDER BY 1, 2;
 
 -- looking at total population vs vaccinations
 -- USE CTE - number of columns must be  same or it will give u an error
-WITH  PopvsVac AS
-(SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-, SUM(vac.new_vaccinations) OVER (PARTITION BY dea.location ORDER BY dea.location, dea.date) AS RollingPeopleVaccinated
-FROM `portfolioproject-326019.Tables.CovidDeaths` dea
-JOIN `portfolioproject-326019.Tables.CovidVaccinations` vac
-    ON dea.location = vac.location 
-    AND dea.date = vac.date
-WHERE dea.continent IS NOT NULL
+WITH PopVsVac (Continent, Location, Date, Population, New_Vaccinations, RollingPeopleVaccinated) 
+AS
+(
+SELECT dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations,
+SUM(CONVERT(int,vac.new_vaccinations)) OVER (PARTITION BY dea.location, dea.date) AS RollingPeopleVaccinated
+FROM CovidDeaths dea
+JOIN CovidVaccinations vac 
+	ON dea.location = vac.location
+	AND dea.date = vac.date
+WHERE dea.continent IS NOT NULL 
 )
-
-SELECT *, (RollingPeopleVaccinated/population)*100 FROM PopvsVac;
+SELECT *, (RollingPeopleVaccinated/Population)*100 AS RollingVaccinationPercentage
+FROM PopVsVac
+-- USE CTE
