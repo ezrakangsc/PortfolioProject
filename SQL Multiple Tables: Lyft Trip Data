@@ -1,0 +1,53 @@
+SELECT * FROM trips;  -- primary key id
+SELECT * FROM riders; -- primary key id
+SELECT * FROM riders2; -- pimary key id
+SELECT * FROM cars; -- primary key id
+
+-- Cross Join between riders and cars 
+SELECT * 
+FROM riders
+CROSS JOIN cars;
+
+-- left join between trips and users
+SELECT * 
+FROM trips t
+LEFT JOIN riders r
+  ON t.rider_id = r.id; 
+
+-- inner join between trips and cars
+SELECT * 
+FROM trips t 
+INNER JOIN cars c 
+  ON t.car_id = c.id;
+
+-- stacking new riders on top of old riders
+SELECT * 
+FROM riders
+UNION 
+SELECT * 
+FROM riders2;
+
+-- Queries and Aggregates
+-- What is the average cost for a trip?
+SELECT AVG(cost)
+FROM trips;
+
+-- lyft is looking to do an email campaign for all the irregular users. find all the riders who have used Lyft less than 500 times
+SELECT * 
+FROM riders
+WHERE total_trips < 500
+UNION 
+SELECT * 
+FROM riders2
+WHERE total_trips < 500;
+
+-- calculate the number of cars that are active 
+SELECT COUNT(*)
+FROM cars
+WHERE status = 'active';
+
+-- its safety recall time for cars that have been on the road for a while. write a query that finds the two cars that have the highest trips_completed 
+SELECT * 
+FROM cars
+ORDER BY trips_completed DESC 
+LIMIT 2; 
